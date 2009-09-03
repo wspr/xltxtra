@@ -211,7 +211,21 @@ This work consists of the file  xltxtra.dtx
 % \subsection{Logos}
 % \seclabel{logos}
 %
-% This part of the package essentially exists to define the \cmd\XeTeX\ and \cmd\XeLaTeX\ logos. Here're some examples. The default:
+% This part of the package essentially exists to define the \cmd\XeTeX\ and \cmd\XeLaTeX\ logos,
+% which need to be tuned according to the font that is used.
+% Andrew Moschou’s |metalogo| package is used to achieve this. Here are some examples. The default:
+% \begingroup
+% \setlogokern{Xe}{default}
+% \setlogokern{eL}{default}
+% \setlogokern{La}{default}
+% \setlogokern{aT}{default}
+% \setlogokern{Te}{default}
+% \setlogokern{eX}{default}
+% \setlogokern{eT}{default}
+% \setlogokern{X2}{default}
+% \setlogodrop{default}
+% \setLaTeXa{default}
+% \setLaTeXee{default}
 % \begin{example}
 %   \TeX\ \XeTeX\ \LaTeX\ \XeLaTeX
 % \end{example}
@@ -220,10 +234,11 @@ This work consists of the file  xltxtra.dtx
 %   \usefont{OT1}{cmr}{m}{n}
 %   \TeX\ \XeTeX\ \LaTeX\ \XeLaTeX
 % \end{example}
+% \endgroup
 %
-% Look in the implementation corresponding to this section to see how to customise the spacings in these logos, but be warned it's fairly crude and may change in the future.
+% Look in the implementation corresponding to this section to see how to customise the spacings in these logos and refer to the documentation for |metalogo| for more information.
 %
-% The \pkgopt{no-logos} will not redefine \cmd\TeX\ or \cmd\LaTeX\ but will still define \cmd\XeTeX\ and \cmd\XeLaTeX. (The only advantage for not doing this is more consistency when customising the spacing, which isn't really recommended anyway\dots)
+% The \pkgopt{no-logos} will not redefine \cmd\TeX\ or \cmd\LaTeX\ but will still define \cmd\XeTeX\ and \cmd\XeLaTeX.
 %
 % If the \pkg{hyperref} package is loaded, these logos will be set up to behave properly in PDF bookmarks and so on.
 % 
@@ -243,7 +258,7 @@ This work consists of the file  xltxtra.dtx
 %   \fontspec{Warnock Pro}
 %   ICU: \vfrac{123}{456}
 % \end{example}
-% \noindent (This can be achieved in regular \LaTeX\ with the \pkg{nicefrac} package, but don't believe its name: these fractions aren't nice!)
+% \noindent (This can also be achieved in regular \LaTeX\ with either the \pkg{nicefrac} or \pkg{xfrac} package.)
 %
 % Only use it when you know it will work; no warnings are given if the font doesn't support the necessary features.
 %
@@ -269,7 +284,7 @@ This work consists of the file  xltxtra.dtx
 %
 %    \begin{macrocode}
 \ProvidesPackage{xltxtra}
-  [2008/07/29 v0.5 Improvements for the "XeLaTeX" format]  
+  [2009/09/02 v0.5 Improvements for the "XeLaTeX" format]  
 %    \end{macrocode}
 %
 % \changes{v0.3}{2007/05/29}{Added proper documentation.}
@@ -307,125 +322,75 @@ This work consists of the file  xltxtra.dtx
 % \DescribeMacro{\XeTeX}
 % \DescribeMacro{\XeLaTeX}
 % The \TeX-related logos people insist upon using need to be tuned
-% on a per-font  basis. This package will (might!) eventually allow this,
-% but for now, it's baby steps. The \XeTeX\ and \XeLaTeX\ logos
-% are provided.
+% on a per-font  basis. This package calls upon Andrew Moschou's package
+% |metalogo| for this purpose. To tune the logos to each font,
+% use the commands \cmd\setlogokern, \cmd\setlogodrop, etc.\ Refer to
+% |mathspec|’s documentation for further details.
 %
-% The various \TeX-like logos that extend outside the regular
-% vertical alphabetic bounds of running text have the unfortunate
-% side-effects in \XeTeX\ of often overrunning the \cmd\baselineskip.
-% Putting the logos in zero-height boxes prevents this problem.
-% Actually, this problem doesn't happen anymore.
-%
-% \noindent To do:
-% \begin{itemize}[noitemsep]
-% \item adapt \cmd\LaTeX\ to use small caps if available\dots
-% \item \dots otherwise, need a scaling factor, and maybe a vertical nudge factor
-% \item add other logos
-% \item per-font parameters, with some defaults for common fonts
-% \item add `low contrast' small caps versions, et al.
-% \item probably break out the whole thing into its own package, if it works
-% \end{itemize}
-%
-% \begin{macro}{\TeX@logo@spacing}
-% \darg{Kern between T \& eX}
-% \darg{Kern between Te \& X}
-% \darg{Lowering amount for E in TeX}
-% \darg{Kerning between L \& aTeX}
-% \darg{Kerning between La \& TeX}
-% \darg{Kerning between Xe \& LaTeX}
-% This macro defines new \cmd\TeX\ and \cmd\XeTeX\ logos.
-% Parameters must be tuned on a per-font basis:
 % \begin{example}
-%   \TeX@logo@spacing{-0.12em}{-0.12em}%
-%     {0.5ex}{-0.3em}{-0.12em}{-0.1em}
-%   \TeX\ \XeTeX\ \LaTeX\ \XeLaTeX
+%   \setlogokern{Xe}{-0.061em}
+%   \setlogokern{eL}{-0.057em}
+%   \setlogokern{La}{-0.265em}
+%   \setlogokern{aT}{-0.0585em}
+%   \setlogokern{Te}{-0.0575em}
+%   \setlogokern{eX}{-0.072em}
+%   \setlogokern{eT}{-0.056em}
+%   \setlogokern{X2}{0.1667em}
+%   \setlogodrop{0.153em}
+%   \setLaTeXa{\scshape a}
+%   \setLaTeXee{\mbox{\fontspec{Times}\itshape ε}}
+%   \TeX\ \XeTeX\ \LaTeX\ \XeLaTeX\ \LaTeXe
 % \end{example}
 %
-% \emph{Warning!} This macro will {\fontspec{Hoefler Text Black} almost definitely} change in the future.
-% If you care abouts backwards compatibility in your documents, copy+paste
-% the definitions below rather than using \cmd\TeX@logo@spacing.
+%    \begin{macrocode}
+\RequirePackage{metalogo}
+\setlogokern{Te}{-0.15em}
+\setlogokern{eX}{-0.15em}
+\setlogokern{La}{-0.36em}
+\setlogokern{aT}{-0.15em}
+\setlogokern{Xe}{-0.15em}
+\setlogokern{eT}{-0.15em}
+\setlogokern{eL}{-0.1em}
+\setlogokern{X2}{default}
+\setlogodrop{.5ex}
+\setLaTeXa{\scshape a}
+%    \end{macrocode}
+%
+% The \pkgopt{no-logos} might be in effect, in which case \cmd\TeX, \cmd\LaTeX\ and
+% \cmd\LaTeXe\ should keep their original definitions (which were saved by |metalogo|).
+%
+%    \begin{macrocode}
+\if@xxt@nologos@
+  \let\TeX\original@TeX
+  \let\LaTeX\original@TeX
+  \let\LaTeXe\original@LaTeXe
+\fi
+%    \end{macrocode}
+% 
+% \begin{macro}{\TeX@logo@spacing}
+% This macro is now deprecated. It is recommended to use the commands
+% from |metalogo|.
 %
 %    \begin{macrocode}
 \newcommand*\TeX@logo@spacing[6]{%
-  \def\xxt@kern@Te{#1}%
-  \def\xxt@kern@eX{#2}%
-  \def\xxt@lower@e{#3}%
-  \def\xxt@kern@La{#4}%
-  \def\xxt@kern@aT{#5}%  
-  \def\xxt@kern@eL{#6}%  
-}
-\unless\if@xxt@nologos@
-\DeclareRobustCommand\TeX{%
-  \leavevmode
-  \smash{%
-    T\kern\xxt@kern@Te
-    \lower\xxt@lower@e\hbox{E}\kern\xxt@kern@eX X}%
-  \spacefactor1000\relax}
-\DeclareRobustCommand{\LaTeX}{%
-  \leavevmode
-  \smash{%
-  L\kern\xxt@kern@La 
-  {\sbox\z@ T% 
-    \vbox to\ht\z@{\hbox{\check@mathfonts 
-      \fontsize\sf@size\z@ 
-      \math@fontsfalse\selectfont 
-      A}% 
-    \vss}% 
-  }% 
-  \kern\xxt@kern@aT
-  \TeX}}  
-\fi
-\DeclareRobustCommand\XeTeX{%
-  \leavevmode
-  \smash{%
-   X\lower\xxt@lower@e
-   \hbox{\kern\xxt@kern@eX
-     \ifnum\XeTeXfonttype\font>0
-       \ifnum\XeTeXcharglyph"018E>0
-         \char"018E\relax
-       \else
-         \ifdim\fontdimen1\font=0pt
-           \reflectbox{E}%
-         \else
-           \XeTeXuseglyphmetrics=1%
-           \setbox0=\hbox{E}\dimen0=\ht0\advance\dimen0by\dp0%
-           \raise\dimen0\hbox{\rotatebox{180}{\box0}}%
-         \fi
-       \fi
-     \else
-       \setbox0=\hbox{E}\dimen0=\ht0\advance\dimen0by\dp0%
-       \raise\dimen0\hbox{\rotatebox{180}{\box0}}%
-     \fi
-   }\kern\xxt@kern@Te\TeX}}%
-\DeclareRobustCommand\XeLaTeX{%
-   \leavevmode
-   \smash{%
-    X\lower\xxt@lower@e
-    \hbox{\kern\xxt@kern@eX
-      \ifnum\XeTeXfonttype\font>0\relax
-        \ifnum\XeTeXcharglyph"018E>0\relax
-          \char"018E\relax
-        \else
-          \ifdim\fontdimen1\font=0pt\relax
-            \reflectbox{E}%
-          \else
-            \XeTeXuseglyphmetrics=1\relax
-            \setbox0=\hbox{E}\dimen0=\ht0\advance\dimen0by\dp0\relax
-            \raise\dimen0\hbox{\rotatebox{180}{\box0}}%
-          \fi
-        \fi
-      \else
-        \setbox0=\hbox{E}\dimen0=\ht0\advance\dimen0by\dp0\relax
-        \raise\dimen0\hbox{\rotatebox{180}{\box0}}%        
-      \fi}\kern\xxt@kern@eL\LaTeX}}
-\TeX@logo@spacing{-0.15em}{-0.15em}{0.5ex}{-0.36em}{-0.15em}{-0.1em}
+  \PackageWarning{xltxtra}{%
+    Use of \protect\TeX@logo@spacing\space is deprecated,\MessageBreak
+    recommend to use commands from package `metalogo' instead}
+  \setlogokern{Te}{#1}%
+  \setlogokern{eT}{#1}%
+  \setlogokern{eX}{#2}%
+  \setlogokern{Xe}{#2}%
+  \setlogodrop{#3}%
+  \setlogokern{La}{#4}%
+  \setlogokern{aT}{#5}%  
+  \setlogokern{eL}{#6}}
 %    \end{macrocode}
 % \changes{v0.1}{2006/05/03}{Implemented.}
 % \changes{v0.2}{2006/06/11}{Added \cmd\XeLaTeX\ logo. Thanks Herb!}
 % \changes{v0.2}{2006/06/11}{Added TFM font check.}
 % \changes{v0.2}{2006/08/12}{\cmd\TeX@logo@spacing made ``private'' and added an arg for \cmd\XeLaTeX.}
 % \changes{v0.3a}{2007/06/20}{Changed \cmd\setlength\ to \cmd\def. Silly me.}
+% \changes{v0.5}{2008/08/30}{AGM: Deprecated \cmd\TeX@logo@spacing, replaced with |metalogo| package.}
 % \end{macro}
 %
 % \textsf{hyperref}-safe versions of the logos:
@@ -443,7 +408,7 @@ This work consists of the file  xltxtra.dtx
 }
 %    \end{macrocode}
 % \changes{v0.3b}{2007/09/01}{Added hyperref logos. Thanks Ross.}
-% \changes{v0.5a}{2009/02/10}{hyperref logos made AtBeginDocument.}
+% \changes{v0.5}{2009/02/10}{hyperref logos made AtBeginDocument.}
 %
 % \section{\eTeX\ functionality}
 % Because it's just sensible, we load the package that actually
@@ -854,8 +819,7 @@ This work consists of the file  xltxtra.dtx
      \def\pfill{\hspace*{\fill}}}
   {\endlist}
 
-\usepackage{array,booktabs,calc,color,enumitem,fancyvrb,graphicx,ifthen,longtable,refstyle,varioref}
-\usepackage{fontspec,xunicode,xltxtra}
+\usepackage{array,booktabs,calc,color,enumitem,fancyvrb,graphicx,ifthen,longtable,refstyle,varioref,xltxtra}
 \setromanfont[Mapping=tex-text, BoldFont=Hoefler Text,
   ItalicFeatures={Contextuals={NoWordFinal,NoLineFinal}}]{Hoefler Text}
 \setsansfont[Scale=MatchLowercase,Mapping=tex-text,BoldFont=Gill Sans]{Gill Sans}
@@ -863,7 +827,20 @@ This work consists of the file  xltxtra.dtx
 
 \linespread{1.05}      % A bit more space between lines
 \frenchspacing         % Remove ugly extra space after punctuation
-  
+
+\setlogokern{Xe}{-0.061em}
+\setlogokern{eL}{-0.057em}
+\setlogokern{La}{-0.265em}
+\setlogokern{aT}{-0.0585em}
+\setlogokern{Te}{-0.0575em}
+\setlogokern{eX}{-0.072em}
+\setlogokern{eT}{-0.056em}
+\setlogokern{X2}{0.1667em}
+\setlogodrop{0.153em}
+\setLaTeXa{\scshape a}
+\setLaTeXee{\mbox{\fontspec{Times}\itshape ε}}
+\def\eTeX{{\fontspec{Times}\textit{ε}{}}-\TeX} % The eTeX logo is not (yet) covered by metalogo
+
 \definecolor{niceblue}{rgb}{0.2,0.4,0.6}
 \def\theCodelineNo{\textcolor{niceblue}{\sffamily\tiny\arabic{CodelineNo}}}
 
@@ -928,8 +905,6 @@ This work consists of the file  xltxtra.dtx
 \def\ie{\latin{i.e.}}
 \def\etc{\@ifnextchar.{\latin{etc}}{\latin{etc.}\@}}
 
-\def\OMEGA{Ω}
-
 \newcounter{argument}
 \g@addto@macro\endmacro{\setcounter{argument}{0}}
 \newcommand*\darg[1]{%
@@ -955,4 +930,4 @@ This work consists of the file  xltxtra.dtx
 % \typeout{*************************************************************}
 %
 \endinput
- 
+
