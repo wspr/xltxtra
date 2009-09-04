@@ -1,13 +1,13 @@
--------------------------
+________________________
 THE XLTXTRA PACKAGE v0.5
 
-This package provides an ever increasing number of
-small features that are useful for XeLaTeX.
+This package provides a number of small features
+that are useful for XeLaTeX.
 
 It loads the fixltx2e and etex packages and
-patches a couple of other LaTeX commands: 
+patches a couple of other LaTeX commands:
   \-: for discretionary hyphenation with variable
-     hyphenation characters, and 
+     hyphenation characters, and
   \textsuperscript & \textsubscript:
      now use fontspec to access
      real superior/inferior characters,
@@ -17,19 +17,20 @@ patches a couple of other LaTeX commands:
   \verb*: now displays visible spaces correctly
   \begin{verbatim*}: ditto
 
-The following packages are patched to correctly 
-display visible space within various verbatims:
-  verbatim, moreverb, fancyvrb, listings
+The following packages are patched (if necessary)
+to correctly display visible space within various
+verbatims: verbatim, moreverb, fancyvrb, listings
 
-Defines logos \XeTeX and \XeLaTeX.
+Defines logos \XeTeX and \XeLaTeX via
+Andrew Moschou's metalogo package.
 
 Defines the dubiously useful commands
  \vfrac - for vulgar fractions with fontspec
  \namedglyph - to access font glyphs by name
- 
-For more info see the documentation xltxtra.pdf.
 
---------------
+For more information see the documentation xltxtra.pdf.
+
+______________
 Will Robertson
 2006-2009
-Distributed under the LaTeX Project Public License
+Released under the LaTeX Project Public License
