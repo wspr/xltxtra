@@ -3,11 +3,11 @@
 \iffalse
 %</internal>
 %<*readme>
--------------------------
+________________________
 THE XLTXTRA PACKAGE v0.5
 
-This package provides an ever increasing number of
-small features that are useful for XeLaTeX.
+This package provides a number of small features
+that are useful for XeLaTeX.
 
 It loads the fixltx2e and etex packages and
 patches a couple of other LaTeX commands: 
@@ -22,22 +22,23 @@ patches a couple of other LaTeX commands:
   \verb*: now displays visible spaces correctly
   \begin{verbatim*}: ditto
 
-The following packages are patched to correctly 
-display visible space within various verbatims:
-  verbatim, moreverb, fancyvrb, listings
+The following packages are patched (if necessary)
+to correctly display visible space within various
+verbatims: verbatim, moreverb, fancyvrb, listings
 
-Defines logos \XeTeX and \XeLaTeX.
+Defines logos \XeTeX and \XeLaTeX via 
+Andrew Moschou's metalogo package.
 
 Defines the dubiously useful commands
  \vfrac - for vulgar fractions with fontspec
  \namedglyph - to access font glyphs by name
  
-For more info see the documentation xltxtra.pdf.
+For more information see the documentation xltxtra.pdf.
 
---------------
+______________
 Will Robertson
 2006-2009
-Distributed under the LaTeX Project Public License
+Released under the LaTeX Project Public License
 %</readme>
 %<*internal>
 \fi
@@ -50,17 +51,15 @@ Distributed under the LaTeX Project Public License
 \input docstrip.tex
 \keepsilent
 \preamble
-
   ____________________________
-  The xltxtra package         
-  (C) 2006-2008  Will Robertson    
+  The XLTXTRA package         
+  (C) 2006-2009 Will Robertson
   License information appended
-
 
 \endpreamble
 \postamble
 
-Copyright (C) 2006-2008 by Will Robertson <wspr81@gmail.com>
+Copyright (C) 2006-2009 by Will Robertson <wspr81@gmail.com>
 
 Distributable under the LaTeX Project Public License,
 version 1.3c or higher (your choice). The latest version of
@@ -90,7 +89,7 @@ This work consists of the file  xltxtra.dtx
 %</internal>
 %
 %<*driver>
-\documentclass[12pt]{ltxdoc}
+\documentclass{ltxdoc}
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
@@ -113,6 +112,8 @@ This work consists of the file  xltxtra.dtx
 % \date{\filedate \qquad \fileversion}
 %
 % \maketitle
+%
+% \tableofcontents
 %
 % \section{Introduction}
 %
@@ -290,7 +291,7 @@ This work consists of the file  xltxtra.dtx
 % \changes{v0.3}{2007/05/29}{Added proper documentation.}
 % \changes{v0.3}{2007/05/29}{Added \texttt{no-} package options to restrict functionality.}
 % \changes{v0.4}{2008/07/29}{Added support for verbatim \& visible spaces.}
-% \PrintChanges
+% ^^A\PrintChanges
 %
 % \paragraph{Option processing}
 %    \begin{macrocode}
@@ -311,7 +312,6 @@ This work consists of the file  xltxtra.dtx
 %    \begin{macrocode}
 \RequirePackage{ifxetex}
 \RequireXeTeX
-\RequirePackage{graphicx}
 \RequirePackage{fontspec}
 \RequirePackage{xunicode}
 %    \end{macrocode}
@@ -390,7 +390,7 @@ This work consists of the file  xltxtra.dtx
 % \changes{v0.2}{2006/06/11}{Added TFM font check.}
 % \changes{v0.2}{2006/08/12}{\cmd\TeX@logo@spacing made ``private'' and added an arg for \cmd\XeLaTeX.}
 % \changes{v0.3a}{2007/06/20}{Changed \cmd\setlength\ to \cmd\def. Silly me.}
-% \changes{v0.5}{2008/08/30}{AGM: Deprecated \cmd\TeX@logo@spacing, replaced with |metalogo| package.}
+% \changes{v0.5}{2009/09/02}{Deprecated \cmd\TeX@logo@spacing, replaced with \textsf{metalogo} package (AGM).}
 % \end{macro}
 %
 % \textsf{hyperref}-safe versions of the logos:
@@ -820,18 +820,18 @@ This work consists of the file  xltxtra.dtx
   {\endlist}
 
 \usepackage{array,booktabs,calc,color,enumitem,fancyvrb,graphicx,ifthen,longtable,refstyle,varioref,xltxtra}
-\setromanfont[Mapping=tex-text, BoldFont=Hoefler Text,
-  ItalicFeatures={Contextuals={NoWordFinal,NoLineFinal}}]{Hoefler Text}
-\setsansfont[Scale=MatchLowercase,Mapping=tex-text,BoldFont=Gill Sans]{Gill Sans}
-\setmonofont[Scale=MatchLowercase]{Monaco}
+\usepackage[rm]{titlesec}
+\setmainfont[Mapping=tex-text]{TeX Gyre Pagella}
+\setsansfont[Scale=MatchLowercase,Mapping=tex-text]{Verdana}
+\setmonofont[Scale=MatchLowercase]{Consolas}
 
 \linespread{1.05}      % A bit more space between lines
 \frenchspacing         % Remove ugly extra space after punctuation
 
 \setlogokern{Xe}{-0.061em}
 \setlogokern{eL}{-0.057em}
-\setlogokern{La}{-0.265em}
-\setlogokern{aT}{-0.0585em}
+\setlogokern{La}{-0.28em}
+\setlogokern{aT}{-0.10em}
 \setlogokern{Te}{-0.0575em}
 \setlogokern{eX}{-0.072em}
 \setlogokern{eT}{-0.056em}
