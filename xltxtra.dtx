@@ -3,8 +3,8 @@
 \iffalse
 %</internal>
 %<*readme>
-________________________
-THE XLTXTRA PACKAGE v0.5
+_________________________
+THE XLTXTRA PACKAGE v0.5a
 
 This package provides a number of small features
 that are useful for XeLaTeX.
@@ -123,7 +123,7 @@ This work consists of the file  xltxtra.dtx
 % \XeTeX\ format.
 %
 % \subsection{Usage}
-% Easy: |\usepackage{xltxtra}|. This package automatically loads the following packages: \pkg{fixltx2e}, \pkg{etex}, \pkg{xunicode}, \pkg{fontspec}.
+% Easy: |\usepackage{xltxtra}|. This package automatically loads the following packages: \pkg{fixltx2e}, \pkg{etex}, \pkg{metalogo}, \pkg{xunicode}, \pkg{fontspec}.
 %
 % There are some package options to disable various functionality that could clash with other things:
 % \begin{description}[font=\ttfamily]
@@ -213,8 +213,11 @@ This work consists of the file  xltxtra.dtx
 % \seclabel{logos}
 %
 % This part of the package essentially exists to define the \cmd\XeTeX\ and \cmd\XeLaTeX\ logos,
-% which need to be tuned according to the font that is used.
-% Andrew Moschou’s |metalogo| package is used to achieve this. Here are some examples. The default:
+% which need to be tuned according to the font that is used. Originally I had some hard-coded
+% definitions in here, but Andrew Moschou’s |metalogo| package now provides a much more
+% flexible and useful interface to a variety of \TeX-related logos.
+%
+% Here are some examples. The default:
 % \begingroup
 % \setlogokern{Xe}{default}
 % \setlogokern{eL}{default}
@@ -230,18 +233,16 @@ This work consists of the file  xltxtra.dtx
 % \begin{example}
 %   \TeX\ \XeTeX\ \LaTeX\ \XeLaTeX
 % \end{example}
-% \noindent Notice it's a bit tight compared to not using Computer Modern, for which the logos were designed:
+% \noindent Notice that it's a bit tight when not using Computer Modern, for which the logos were designed:
 % \begin{example}
 %   \usefont{OT1}{cmr}{m}{n}
 %   \TeX\ \XeTeX\ \LaTeX\ \XeLaTeX
 % \end{example}
 % \endgroup
 %
-% Look in the implementation corresponding to this section to see how to customise the spacings in these logos and refer to the documentation for |metalogo| for more information.
+% These logos, ideally, should be hand-tuned for each font that they're used in. Please refer to the |metalogo| documentation for more information.
 %
 % The \pkgopt{no-logos} will not redefine \cmd\TeX\ or \cmd\LaTeX\ but will still define \cmd\XeTeX\ and \cmd\XeLaTeX.
-%
-% If the \pkg{hyperref} package is loaded, these logos will be set up to behave properly in PDF bookmarks and so on.
 % 
 % \subsection{Discrectionary hyphenation: \cmd\-}
 % \seclabel{hyphen}
@@ -285,7 +286,7 @@ This work consists of the file  xltxtra.dtx
 %
 %    \begin{macrocode}
 \ProvidesPackage{xltxtra}
-  [2009/09/02 v0.5 Improvements for the "XeLaTeX" format]  
+  [2009/10/25 v0.5a Improvements for the "XeLaTeX" format]  
 %    \end{macrocode}
 %
 % \changes{v0.3}{2007/05/29}{Added proper documentation.}
@@ -344,16 +345,6 @@ This work consists of the file  xltxtra.dtx
 %
 %    \begin{macrocode}
 \RequirePackage{metalogo}
-\setlogokern{Te}{-0.15em}
-\setlogokern{eX}{-0.15em}
-\setlogokern{La}{-0.36em}
-\setlogokern{aT}{-0.15em}
-\setlogokern{Xe}{-0.15em}
-\setlogokern{eT}{-0.15em}
-\setlogokern{eL}{-0.1em}
-\setlogokern{X2}{default}
-\setlogodrop{.5ex}
-\setLaTeXa{\scshape a}
 %    \end{macrocode}
 %
 % The \pkgopt{no-logos} might be in effect, in which case \cmd\TeX, \cmd\LaTeX\ and
@@ -391,24 +382,8 @@ This work consists of the file  xltxtra.dtx
 % \changes{v0.2}{2006/08/12}{\cmd\TeX@logo@spacing made ``private'' and added an arg for \cmd\XeLaTeX.}
 % \changes{v0.3a}{2007/06/20}{Changed \cmd\setlength\ to \cmd\def. Silly me.}
 % \changes{v0.5}{2009/09/02}{Deprecated \cmd\TeX@logo@spacing, replaced with \textsf{metalogo} package (AGM).}
+% \changes{v0.5a}{2009/10/25}{Removed metalogo customisations; reply on the package defaults instead.}
 % \end{macro}
-%
-% \textsf{hyperref}-safe versions of the logos:
-%    \begin{macrocode}
-\AtBeginDocument{%
-  \@ifpackageloaded{hyperref}{%
-    \pdfstringdefDisableCommands{%
-      \def\TeX{TeX}%
-      \def\XeTeX{XeTeX}%
-      \def\LaTeX{LaTeX}%
-      \def\LaTeXe{LaTeX2e}%
-      \def\XeLaTeX{XeLaTeX}%
-    }%
-  }{}%
-}
-%    \end{macrocode}
-% \changes{v0.3b}{2007/09/01}{Added hyperref logos. Thanks Ross.}
-% \changes{v0.5}{2009/02/10}{hyperref logos made AtBeginDocument.}
 %
 % \section{\eTeX\ functionality}
 % Because it's just sensible, we load the package that actually

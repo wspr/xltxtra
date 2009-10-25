@@ -1,5 +1,5 @@
-________________________
-THE XLTXTRA PACKAGE v0.5
+_________________________
+THE XLTXTRA PACKAGE v0.5a
 
 This package provides a number of small features
 that are useful for XeLaTeX.
