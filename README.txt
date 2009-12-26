@@ -1,5 +1,5 @@
 _________________________
-THE XLTXTRA PACKAGE v0.5a
+THE XLTXTRA PACKAGE v0.5b
 
 This package provides a number of small features
 that are useful for XeLaTeX.
@@ -29,6 +29,13 @@ Defines the dubiously useful commands
  \namedglyph - to access font glyphs by name
 
 For more information see the documentation xltxtra.pdf.
+
+____________
+Change History
+
+v0.5b:
+    Bug fix for "\LaTeX" when [no-logos] is used.
+    Thanks to Enrico Gregorio for finding this.
 
 ______________
 Will Robertson
