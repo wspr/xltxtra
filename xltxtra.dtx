@@ -4,10 +4,10 @@
 %</internal>
 %<*readme>
 _________________________
-THE XLTXTRA PACKAGE v0.5b
+THE XLTXTRA PACKAGE v0.6
 
 This package provides a number of small features
-that are useful for XeLaTeX.
+that are useful for XeLaTeX/LuaLaTeX.
 
 It loads the fixltx2e and etex packages and
 patches a couple of other LaTeX commands: 
@@ -38,6 +38,8 @@ For more information see the documentation xltxtra.pdf.
 ____________
 Change History
 
+v0.6:
+    LuaTeX support
 v0.5b:
     Bug fix for "\LaTeX" when [no-logos] is used.
     Thanks to Enrico Gregorio for finding this.
@@ -127,7 +129,7 @@ This work consists of the file  xltxtra.dtx
 % This document describes the \pkg{xltxtra} package. 
 % It implements some odds-and-ends features and
 % improved functionality for broken or sub-standard \LaTeX\ methods when using the
-% \XeTeX\ format.
+% \XeTeX\ or Lua\TeX\ engines.
 %
 % \subsection{Usage}
 % Easy: |\usepackage{xltxtra}|. This package automatically loads the following packages: \pkg{fixltx2e}, \pkg{etex}, \pkg{metalogo}, \pkg{xunicode}, \pkg{fontspec}.
@@ -184,7 +186,7 @@ This work consists of the file  xltxtra.dtx
 % \subsection{Inner emphasis}
 % \seclabel{emph}
 %
-% \pkg{fixltx2e}'s method for checking for ``inner'' emphasis is a little fragile in \XeTeX, because
+% \pkg{fixltx2e}'s method for checking for ``inner'' emphasis is a little fragile in \XeTeX/Lua\TeX, because
 % font slant information might be missing from the font. Therefore, we use \LaTeX's \acro{NFSS}
 % information, which is more likely to be correct.
 %
@@ -293,12 +295,13 @@ This work consists of the file  xltxtra.dtx
 %
 %    \begin{macrocode}
 \ProvidesPackage{xltxtra}
-  [2009/12/26 v0.5b Improvements for the "XeLaTeX" format]  
+  [2010/01/20 v0.6 Improvements for the XeLaTeX/LuaLaTeX formats]
 %    \end{macrocode}
 %
 % \changes{v0.3}{2007/05/29}{Added proper documentation.}
 % \changes{v0.3}{2007/05/29}{Added \texttt{no-} package options to restrict functionality.}
 % \changes{v0.4}{2008/07/29}{Added support for verbatim \& visible spaces.}
+% \changes{v0.6}{2010/01/20}{Added support for Lua\TeX\ engine.}
 % ^^A\PrintChanges
 %
 % \paragraph{Option processing}
@@ -639,6 +642,7 @@ This work consists of the file  xltxtra.dtx
 }
 %    \end{macrocode}
 % \changes{v0.2}{2006/08/12}{Implemented.}
+% \changes{v0.6}{2010/01/20}{Lua\TeX\ support.}
 % \end{macro}
 % \begin{macro}{\xxt@namedglyph@fallback}
 % Redefine this macro to change how glyph names that aren't found get typeset.
@@ -682,6 +686,7 @@ This work consists of the file  xltxtra.dtx
 \fi
 %    \end{macrocode}
 % \changes{v0.3}{2007/05/30}{Implemented.}
+% \changes{v0.6}{2010/01/20}{Do nothing if not \XeTeX.}
 % \end{macro}
 %
 % \subsection{Verbatims}
@@ -925,7 +930,7 @@ This work consists of the file  xltxtra.dtx
 % \typeout{*************************************************************}
 % \typeout{*}
 % \typeout{* To finish the installation you have to move the following}
-% \typeout{* file into a directory searched by XeTeX:}
+% \typeout{* file into a directory searched by Kpathsea:}
 % \typeout{*}
 % \typeout{* \space\space\space xltxtra.sty}
 % \typeout{*}
