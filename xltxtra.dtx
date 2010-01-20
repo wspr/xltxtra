@@ -653,6 +653,7 @@ This work consists of the file  xltxtra.dtx
 % This macro is entirely due to Jonathan Kew. 
 % I wish I knew how to write these sorts of things.
 %    \begin{macrocode}
+\ifxetex
 \newbox\xxt@tempbox
 \def\showhyphens#1{%
   \typeout{^^J*********************** 
@@ -678,6 +679,7 @@ This work consists of the file  xltxtra.dtx
        \unhbox\xxt@tempbox}%
      \expandafter\xxt@sh@cat
    \fi}
+\fi
 %    \end{macrocode}
 % \changes{v0.3}{2007/05/30}{Implemented.}
 % \end{macro}
