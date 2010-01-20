@@ -621,12 +621,22 @@ This work consists of the file  xltxtra.dtx
 % \darg{Name of the font glyph to be typeset}
 %    \begin{macrocode}
 \newcommand\namedglyph[1]{%
-  \@tempcnta=\XeTeXglyphindex "#1"\relax
-  \ifnum\@tempcnta>0 
-    \XeTeXglyph\@tempcnta 
-  \else 
-    \xxt@namedglyph@fallback{#1}%
-  \fi}
+  \ifxetex
+    \@tempcnta=\XeTeXglyphindex "#1"\relax
+    \ifnum\@tempcnta>0
+      \XeTeXglyph\@tempcnta
+    \else
+      \xxt@namedglyph@fallback{#1}%
+    \fi
+  \else
+    \@tempcnta=\luadirect{tex.sprint(fonts.otf.name_to_slot("#1"))}\relax
+    \ifnum\@tempcnta=63
+      \xxt@namedglyph@fallback{#1}%
+    \else
+      \char\@tempcnta
+    \fi
+  \fi
+}
 %    \end{macrocode}
 % \changes{v0.2}{2006/08/12}{Implemented.}
 % \end{macro}
