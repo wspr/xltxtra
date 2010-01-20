@@ -319,9 +319,17 @@ This work consists of the file  xltxtra.dtx
 % \paragraph{Required packages}
 %    \begin{macrocode}
 \RequirePackage{ifxetex}
-\RequireXeTeX
-\RequirePackage{fontspec}
-\RequirePackage{xunicode}
+\RequirePackage{ifluatex}
+\ifxetex
+\else
+  \ifluatex
+  \else
+    \errmessage{(xltxra) Requires XeTeX or LuaTeX to function!}
+  \fi
+\fi
+
+\RequirePackage{fontspec}[2010/01/20]
+\RequirePackage{xunicode}[2010/01/20]
 %    \end{macrocode}
 %
 % \section{Programmming bits and pieces}
