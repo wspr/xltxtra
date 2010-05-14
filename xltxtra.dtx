@@ -4,7 +4,7 @@
 %</internal>
 %<*readme>
 _________________________
-THE XLTXTRA PACKAGE v0.5b
+THE XLTXTRA PACKAGE v0.5c
 
 This package provides a number of small features
 that are useful for XeLaTeX.
@@ -38,13 +38,17 @@ For more information see the documentation xltxtra.pdf.
 ____________
 Change History
 
+v0.5c:
+    Update internals for fontspec v2.0.
+    (No user-level changes.)
+
 v0.5b:
     Bug fix for "\LaTeX" when [no-logos] is used.
     Thanks to Enrico Gregorio for finding this.
 
 ______________
 Will Robertson
-2006-2009
+2006-2010
 Released under the LaTeX Project Public License
 %</readme>
 %<*internal>
@@ -60,13 +64,13 @@ Released under the LaTeX Project Public License
 \preamble
   ____________________________
   The XLTXTRA package         
-  (C) 2006-2009 Will Robertson
+  (C) 2006-2010 Will Robertson
   License information appended
 
 \endpreamble
 \postamble
 
-Copyright (C) 2006-2009 by Will Robertson <wspr81@gmail.com>
+Copyright (C) 2006-2010 by Will Robertson <wspr81@gmail.com>
 
 Distributable under the LaTeX Project Public License,
 version 1.3c or higher (your choice). The latest version of
@@ -293,7 +297,7 @@ This work consists of the file  xltxtra.dtx
 %
 %    \begin{macrocode}
 \ProvidesPackage{xltxtra}
-  [2009/12/26 v0.5b Improvements for the "XeLaTeX" format]  
+  [2010/05/14 v0.5c Improvements for the "XeLaTeX" format]
 %    \end{macrocode}
 %
 % \changes{v0.3}{2007/05/29}{Added proper documentation.}
@@ -320,7 +324,7 @@ This work consists of the file  xltxtra.dtx
 %    \begin{macrocode}
 \RequirePackage{ifxetex}
 \RequireXeTeX
-\RequirePackage{fontspec}
+\RequirePackage{fontspec}[2010/05/14 v2.0]
 \RequirePackage{xunicode}
 %    \end{macrocode}
 %
@@ -505,74 +509,100 @@ This work consists of the file  xltxtra.dtx
 %
 % \begin{macro}{\realsubscript}
 %    \begin{macrocode}
-\DeclareRobustCommand*\realsubscript[1]{%
-  \begingroup
-    \ifcsname zf@family@fontdef\f@family\endcsname
-      \c@zf@script 1818326126\relax
-      \font\zf@basefont="\csname zf@family@fontdef\f@family\endcsname" at \f@size pt
-      \zf@set@font@type
-      \ifzf@icu
-        \zf@check@ot@feat{+subs}%
-        \if@tempswa
-          {\addfontfeature{VerticalPosition=Inferior}#1}%
-        \else
-          \zf@check@ot@feat{+sinf}%
-          \if@tempswa
-            {\addfontfeature{VerticalPosition=ScientificInferior}#1}%
-          \else
-            \fakesubscript{#1}%
-          \fi
-        \fi
-      \else\ifzf@atsui
-        \zf@make@aat@feature@string{10}{2}%
-        \unless\ifx\@tempa\@empty
-          {\addfontfeature{VerticalPosition=Inferior}#1}%
-        \else
-          \fakesubscript{#1}%
-        \fi
-      \fi\fi
-    \else
-      \fakesubscript{#1}%
-    \fi
-  \endgroup}
+\ExplSyntaxOn
+\DeclareRobustCommand*\realsubscript[1]{
+  \fontspec_if_fontspec_font:TF
+  {
+%    \end{macrocode}
+% OpenType fonts:
+%    \begin{macrocode}
+    \fontspec_if_opentype:TF
+    {
+      \fontspec_if_feature:nTF {+subs}
+      {
+        {\addfontfeature{VerticalPosition=Inferior}#1}
+      }
+      {
+        \fontspec_if_feature:nTF {+sinf}
+        {
+          {\addfontfeature{VerticalPosition=ScientificInferior}#1}
+        }
+        {
+          \fakesubscript{#1}
+        }
+      }
+    }
+%    \end{macrocode}
+% ATSUI fonts:
+%    \begin{macrocode}
+    {
+      \fontspec_if_aat_feature:nnTF {10} {2}
+      {
+        {\addfontfeature{VerticalPosition=Inferior}#1}
+      }
+      {
+        \fakesubscript{#1}
+      }
+    }
+  }
+%    \end{macrocode}
+% Non-fontspec fonts:
+%    \begin{macrocode}
+  {
+    \fakesubscript{#1}
+  }
+}
 %    \end{macrocode}
 % \changes{v0.1}{2006/05/03}{Implemented.}
 % \changes{v0.3}{2007/05/29}{Fixes to catch up with fontspec. Name change.}
 % \changes{v0.3c}{2008/03/02}{Fixed crash when used with a TFM font.}
+% \changes{v0.5c}{2010/05/14}{Use fontspec programmer's interface.}
 % \end{macro}
 %
 % \begin{macro}{\realsuperscript}
 % Text superscripts:
 %    \begin{macrocode}
-\DeclareRobustCommand*\realsuperscript[1]{%
-  \begingroup
-    \ifcsname zf@family@fontdef\f@family\endcsname
-      \c@zf@script 1818326126\relax
-      \font\zf@basefont="\csname zf@family@fontdef\f@family\endcsname" at \f@size pt
-      \zf@set@font@type
-      \ifzf@icu
-        \zf@check@ot@feat{+sups}%
-        \if@tempswa
-          {\addfontfeature{VerticalPosition=Superior}#1}%
-        \else
-          \fakesuperscript{#1}%
-        \fi
-      \else\ifzf@atsui
-        \zf@make@aat@feature@string{10}{1}%
-        \unless\ifx\@tempa\@empty
-          {\addfontfeature{VerticalPosition=Superior}#1}%
-        \else
-         \fakesuperscript{#1}%
-        \fi
-      \fi\fi
-    \else
-      \fakesuperscript{#1}%
-    \fi
-  \endgroup}
+\DeclareRobustCommand*\realsuperscript[1]{
+  \fontspec_if_fontspec_font:TF
+  {
+%    \end{macrocode}
+% OpenType fonts:
+%    \begin{macrocode}
+    \fontspec_if_opentype:TF
+    {
+      \fontspec_if_feature:nTF {+sups}
+      {
+        {\addfontfeature{VerticalPosition=Superior}#1}
+      }
+      {
+        \fakesuperscript{#1}
+      }
+    }
+%    \end{macrocode}
+% ATSUI fonts:
+%    \begin{macrocode}
+    {
+      \fontspec_if_aat_feature:nnTF {10} {1}
+      {
+        {\addfontfeature{VerticalPosition=Superior}#1}
+      }
+      {
+        \fakesuperscript{#1}
+      }
+    }
+  }
+%    \end{macrocode}
+% Non-fontspec fonts:
+%    \begin{macrocode}
+  {
+    \fakesuperscript{#1}
+  }
+}
 %    \end{macrocode}
 % \changes{v0.1}{2006/05/03}{Implemented.}
 % \changes{v0.3}{2007/05/29}{Fixes to catch up with fontspec. Name change.}
 % \changes{v0.3c}{2008/03/02}{Fixed crash when used with a TFM font.}
+% \changes{v0.5c}{2010/05/14}{Use fontspec programmer's interface.}
 % \end{macro}
 %
 % Patching footnotes:
@@ -590,23 +620,31 @@ This work consists of the file  xltxtra.dtx
 % No error checking is done to ensure that the font actually has the neceessary features.
 % Requires the \pkg{xunicode} package for \cmd\textfractionsolidus.
 %    \begin{macrocode}
-\newcommand*\vfrac[2]{%
-  \begingroup
-    \c@zf@script 1818326126\relax
-    \font\zf@basefont="\csname zf@family@fontdef\f@family\endcsname" at \f@size pt
-    \zf@set@font@type
-    \ifzf@icu
-      {\addfontfeature{VerticalPosition=Numerator}#1}%
+\newcommand*\vfrac[2]{
+  \fontspec_if_fontspec_font:TF
+  {
+    \fontspec_if_opentype:TF
+    {
+      {\addfontfeature{VerticalPosition=Numerator}#1}
        \textfractionsolidus
-      {\addfontfeature{VerticalPosition=Denominator}#2}%      
-    \else\ifzf@atsui
-      {\addfontfeature{VerticalPosition=Superior}#1}%
+      {\addfontfeature{VerticalPosition=Denominator}#2}
+    }
+    {
+      {\addfontfeature{VerticalPosition=Superior}#1}
        \textfractionsolidus
-      {\addfontfeature{VerticalPosition=Inferior}#2}%
-    \fi\fi
-  \endgroup}
+      {\addfontfeature{VerticalPosition=Inferior}#2}
+    }
+  }
+  {
+    \PackageError {xltxtra}
+      { \string\vfrac\space~can~only~be~used~with~fontspec~fonts }
+      { Nothing~more~to~tell. }
+  }
+}
+\ExplSyntaxOff
 %    \end{macrocode}
 % \changes{v0.1}{2006/05/03}{Implemented.}
+% \changes{v0.5c}{2010/05/14}{Use fontspec programmer's interface.}
 % \end{macro}
 %
 % \begin{macro}{\namedglyph}
