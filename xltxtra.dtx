@@ -305,6 +305,28 @@ This work consists of the file  xltxtra.dtx
 % \changes{v0.4}{2008/07/29}{Added support for verbatim \& visible spaces.}
 % ^^A\PrintChanges
 %
+% \paragraph{Not for Lua\TeX}
+%    \begin{macrocode}
+\RequirePackage{ifluatex}
+\ifluatex
+  \PackageWarningNoLine {xltxtra} {^^J
+    XLTXTRA IS TO BE USED ONLY UNDER XETEX.
+    LOAD FONTSPEC DIRECTLY, INSTEAD.^^J
+    ABORTING LOADING%
+  }
+  \RequirePackage{fontspec}[2010/05/14 v2.0]
+  \expandafter \endinput
+\fi
+%    \end{macrocode}
+%
+% \paragraph{Required packages}
+%    \begin{macrocode}
+\RequirePackage{ifxetex}
+\RequireXeTeX
+\RequirePackage{fontspec}[2010/05/14 v2.0]
+\RequirePackage{xunicode}
+%    \end{macrocode}
+%
 % \paragraph{Option processing}
 %    \begin{macrocode}
 \newif\if@xxt@nosscript@
@@ -320,13 +342,6 @@ This work consists of the file  xltxtra.dtx
 \ProcessOptions*
 %    \end{macrocode}
 %
-% \paragraph{Required packages}
-%    \begin{macrocode}
-\RequirePackage{ifxetex}
-\RequireXeTeX
-\RequirePackage{fontspec}[2010/05/14 v2.0]
-\RequirePackage{xunicode}
-%    \end{macrocode}
 %
 % \section{Programmming bits and pieces}
 %
