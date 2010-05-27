@@ -1,11 +1,14 @@
 _________________________
-THE XLTXTRA PACKAGE v0.5b
+THE XLTXTRA PACKAGE v0.5c
 
 This package provides a number of small features
 that are useful for XeLaTeX.
 
-It loads the fixltx2e and etex packages and
-patches a couple of other LaTeX commands:
+- Loads fontspec and Ross Moore's xunicode automatically.
+
+- Loads Andrew Moschou's metalogo package for \XeTeX and \XeLaTeX logos.
+
+- Loads the fixltx2e package and patches other LaTeX commands:
   \-: for discretionary hyphenation with variable
      hyphenation characters, and
   \textsuperscript & \textsubscript:
@@ -17,21 +20,22 @@ patches a couple of other LaTeX commands:
   \verb*: now displays visible spaces correctly
   \begin{verbatim*}: ditto
 
-The following packages are patched (if necessary)
-to correctly display visible space within various
-verbatims: verbatim, moreverb, fancyvrb, listings
+- The following packages are patched (where necessary)
+  to correctly display visible space within various
+  verbatims: verbatim, moreverb, fancyvrb, listings
 
-Defines logos \XeTeX and \XeLaTeX via
-Andrew Moschou's metalogo package.
-
-Defines the dubiously useful commands
- \vfrac - for vulgar fractions with fontspec
- \namedglyph - to access font glyphs by name
+- Defines the dubiously useful commands
+     \vfrac - for vulgar fractions with fontspec
+     \namedglyph - to access font glyphs by name
 
 For more information see the documentation xltxtra.pdf.
 
 ____________
 Change History
+
+v0.5c:
+    Update internals for fontspec v2.0.
+    (No user-level changes.)
 
 v0.5b:
     Bug fix for "\LaTeX" when [no-logos] is used.
@@ -39,5 +43,5 @@ v0.5b:
 
 ______________
 Will Robertson
-2006-2009
+2006-2010
 Released under the LaTeX Project Public License
