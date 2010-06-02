@@ -4,30 +4,24 @@
 %</internal>
 %<*readme>
 _________________________
-THE XLTXTRA PACKAGE v0.5c
+THE XLTXTRA PACKAGE v0.5d
 
-This package provides a number of small features
-that are useful for XeLaTeX.
+This package was previous used to provide a number of small
+features that are useful for XeLaTeX. As of fontspec v2, many
+of these have now been incorporated into that package.
+
+This package therefore no longer does as much as it used to,
+but is still provided for backwards compatibility.
 
 - Loads fontspec and Ross Moore's xunicode automatically.
 
 - Loads Andrew Moschou's metalogo package for \XeTeX and \XeLaTeX logos.
 
 - Loads the fixltx2e package and patches other LaTeX commands:
-  \-: for discretionary hyphenation with variable
-     hyphenation characters, and
   \textsuperscript & \textsubscript:
      now use fontspec to access
      real superior/inferior characters,
-  \emph: uses NFSS information to determine
-     when to enter \eminnershape,
   \showhyphens: now works,
-  \verb*: now displays visible spaces correctly
-  \begin{verbatim*}: ditto
-
-- The following packages are patched (where necessary)
-  to correctly display visible space within various
-  verbatims: verbatim, moreverb, fancyvrb, listings
 
 - Defines the dubiously useful commands
      \vfrac - for vulgar fractions with fontspec
@@ -37,6 +31,10 @@ For more information see the documentation xltxtra.pdf.
 
 ____________
 Change History
+
+v0.5d:
+    Remove those parts that have been taken into fontspec v2.0.
+    (No user-level changes.)
 
 v0.5c:
     Update internals for fontspec v2.0.
@@ -139,10 +137,7 @@ This work consists of the file  xltxtra.dtx
 % There are some package options to disable various functionality that could clash with other things:
 % \begin{description}[font=\ttfamily]
 % \item[no-sscript] Swaps the definitions of \cmd\textsubscript\ and \cmd\textsuperscript\ with their respective starred versions, as described in \secref{sscript}.
-% \item[no-emph] Disables the redefinition of \cmd\emph\ and \cmd\em\ described in \secref{emph}.
 % \item[no-logos] Disables the redefinition of \cmd\TeX, etc. described in \secref{logos}, but \emph{does} still define the \cmd\XeTeX\ and \cmd\XeLaTeX\ logo commands.
-% \item[no-hyphen] Disables the redefinition of \cmd\-\ (probably harmless anyway) described in \secref{hyphen}.
-% \item[no-verb] Disables the redefinition of \cmd{\verb*} and |\begin{verbatim*}|, and the patching of various verbatim packages, as described in \secref{verb}.
 % \end{description}
 %
 % \section{Features}
@@ -185,39 +180,6 @@ This work consists of the file  xltxtra.dtx
 % \cmd\fakesuperscript\
 % may be used to access the `new' and `old' functionalities regardless of the \pkgopt{no-sscript}.
 %
-% \subsection{Inner emphasis}
-% \seclabel{emph}
-%
-% \pkg{fixltx2e}'s method for checking for ``inner'' emphasis is a little fragile in \XeTeX, because
-% font slant information might be missing from the font. Therefore, we use \LaTeX's \acro{NFSS}
-% information, which is more likely to be correct.
-%
-% \begin{example}
-%   \renewcommand\eminnershape{\scshape}
-%   \fontspec{Didot}
-%   Nested {\em emphasis is 
-%               \emph{now} fixed.}
-% \end{example}
-%
-% The \pkgopt{no-emph} will disable this redefinition.
-%
-% \subsection{Unicode footnote symbols}
-% By default \LaTeX\ defines symbolic footnote characters in terms of commands 
-% that don't resolve well; better results can be achieved by using specific unicode characters or proper LICRs with the \pkg{xunicode} package.
-%
-% This problem has been solved by loading the 
-% \pkg{fixltx2e} and \pkg{xunicode} packages in \pkg{xltxtra}.
-%
-% \subsection{Verbatim}
-% \seclabel{verb}
-%
-% Many verbatim mechanisms assume the existence of a `visible space' character that exists in the \textsc{ascii} space slot of the typewriter font. This character is known in unicode as \unichar{2434}{box open}, which looks like this: `\verb*| |'.
-%
-% When a unicode typewriter font is used, \LaTeX\ no longer prints visible spaces for the |verbatim*| environment and |\verb*| command. \pkg{xltxtra} fixes this problem by using the correct unicode glyph, and patches the following packages to do the same:
-%  \pkg{listings}, \pkg{fancyvrb}, \pkg{moreverb}, and \pkg{verbatim}.
-%
-% In the case that the typewriter font does not contain `\verb*| |', the Latin Modern Mono font is used as a fallback. 
-%
 %
 %
 % \subsection{Logos}
@@ -255,13 +217,6 @@ This work consists of the file  xltxtra.dtx
 %
 % The \pkgopt{no-logos} will not redefine \cmd\TeX\ or \cmd\LaTeX\ but will still define \cmd\XeTeX\ and \cmd\XeLaTeX.
 % 
-% \subsection{Discrectionary hyphenation: \cmd\-}
-% \seclabel{hyphen}
-%
-% \LaTeX\ defines the macro \cmd\-\ to insert discretionary hyphenation points.
-% However, it is hard-coded in \LaTeX\ to use the hyphen |-| character. Since \pkg{fontspec}
-% makes it easy to change the hyphenation character on a per font basis, it would
-% be nice if \cmd\-\ adjusted automatically — and now it does.
 %
 % \subsection{Vulgar fractions}
 % The \cmd\vfrac\ command for setting `vulgar' fractions based on AAT or OpenType font features. Not really recommended for many purposes, depending on your text, but it's a good example of how to program such things using \pkg{fontspec}.
@@ -297,7 +252,7 @@ This work consists of the file  xltxtra.dtx
 %
 %    \begin{macrocode}
 \ProvidesPackage{xltxtra}
-  [2010/05/27 v0.5c Improvements for the "XeLaTeX" format]
+  [2010/06/03 v0.5d Improvements for the "XeLaTeX" format]
 %    \end{macrocode}
 %
 % \changes{v0.3}{2007/05/29}{Added proper documentation.}
@@ -331,14 +286,8 @@ This work consists of the file  xltxtra.dtx
 %    \begin{macrocode}
 \newif\if@xxt@nosscript@
 \newif\if@xxt@nologos@
-\newif\if@xxt@nohyphen@
-\newif\if@xxt@noemph@
-\newif\if@xxt@noverb@
 \DeclareOption{no-sscript}{\@xxt@nosscript@true}
 \DeclareOption{no-logos}{\@xxt@nologos@true}
-\DeclareOption{no-hyphen}{\@xxt@nohyphen@true}
-\DeclareOption{no-emph}{\@xxt@noemph@true}
-\DeclareOption{no-verb}{\@xxt@noverb@true}
 \ProcessOptions*
 %    \end{macrocode}
 %
@@ -411,62 +360,6 @@ This work consists of the file  xltxtra.dtx
 % \changes{v0.5a}{2009/10/25}{Removed metalogo customisations; reply on the package defaults instead.}
 % \end{macro}
 %
-% \subsection{Unicode footnote symbols}
-%    \begin{macrocode}
-\RequirePackage{fixltx2e}[2006/03/24]
-%    \end{macrocode}
-%
-% \subsection{Emph}
-%    \begin{macrocode}
-\unless\if@xxt@noemph@
-%    \end{macrocode}
-% \begin{macro}{\em}
-% \begin{macro}{\emph}
-% Redefinition of |{\em ...}| and |\emph{...}| to use \textsc{nfss} info to detect when the inner shape should be used.
-%    \begin{macrocode}
-\DeclareRobustCommand\em 
-  {\@nomath\em 
-   \edef\@tempa{\f@shape}%
-   \edef\@tempb{\itdefault}%
-   \ifx\@tempa\@tempb 
-     \eminnershape 
-   \else 
-     \emshape 
-   \fi}
-\DeclareTextFontCommand{\emph}{\em}
-\let\emshape\itshape
-\let\eminnershape\upshape
-%    \end{macrocode}
-% \changes{v0.2}{2006/08/12}{Migrated from \textsf{fontspec}.}
-% \end{macro} \end{macro}
-%    \begin{macrocode}
-\fi
-%    \end{macrocode}
-%
-%
-%
-% \subsection{\cmd\-}
-%    \begin{macrocode}
-\unless\if@xxt@nohyphen@
-%    \end{macrocode}
-%
-% \begin{macro}{\-}
-% This macro is courtesy of Frank Mittelbach and the \LaTeXe\ source code.
-%    \begin{macrocode}
-\DeclareRobustCommand{\-}{%
-  \discretionary{%
-    \char\ifnum\hyphenchar\font<\z@
-           \xlx@defaulthyphenchar
-         \else
-           \hyphenchar\font
-         \fi}{}{}}
-\def\xlx@defaulthyphenchar{`\-}
-%    \end{macrocode}
-% \changes{v0.1}{2006/05/03}{Implemented; from the \LaTeXe\ sources.}
-% \end{macro}
-%    \begin{macrocode}
-\fi
-%    \end{macrocode}
 %
 % \subsection{Subscript and superscript}
 %
@@ -709,123 +602,10 @@ This work consists of the file  xltxtra.dtx
 % \changes{v0.3}{2007/05/30}{Implemented.}
 % \end{macro}
 %
-% \subsection{Verbatims}
-%
-% Many thanks to Apostolos Syropoulos for discovering this problem and writing the  redefinion of \LaTeX's |verbatim| environment and \cs{verb*} command.
-% 
-%    \begin{macrocode}
-\unless\if@xxt@noverb@
-%    \end{macrocode}
-%
-% \begin{macro}{\xxt@visiblespace}
-% Print \unichar{2434}{Open box}, which is used to visibly display a space character.
-%    \begin{macrocode}
-\def\xxt@visiblespace{%
-  \iffontchar\font"2423
-    \expandafter\textvisiblespace
-  \else
-    \expandafter\xxt@visiblespace@fallback
-  \fi}
-%    \end{macrocode}
-% \end{macro}
-% 
-% \begin{macro}{\xxt@visiblespace@fallback}
-% If the current font doesn't have u2434, use Latin Modern Mono instead.
-%    \begin{macrocode}
-\def\xxt@visiblespace@fallback{{%
-  \usefont{EU1}{lmtt}{\f@series}{\f@shape}%
-  \textvisiblespace}}
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\xxt@vprintspaces}
-% Helper macro to turn spaces active and print visible space instead.
-%    \begin{macrocode}
-\begingroup
-  \catcode`\ =\active%
-  \gdef\xxt@vprintspaces{\catcode`\ \active\let \xxt@visiblespace}%
-\endgroup
-%    \end{macrocode}
-% \end{macro}
-% 
-% \begin{macro}{\verb}
-% \begin{macro}{\verb*}
-% Redefine \cmd\verb\ to use \cmd\xxt@vprintspaces.
-%    \begin{macrocode}
-\def\verb{\relax\ifmmode\hbox\else\leavevmode\null\fi
-  \bgroup
-    \verb@eol@error \let\do\@makeother \dospecials
-    \verbatim@font\@noligs
-    \@ifstar\@@sverb\@verb}
-\def\@@sverb{\xxt@vprintspaces\@sverb}
-%    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% 
-% It's better to put small things into \cmd\AtBeginDocument, so here we go:
-%    \begin{macrocode}
-\AtBeginDocument{%
-  \xxt@patch@verbatim
-  \xxt@patch@moreverb
-  \xxt@patch@fancyvrb
-  \xxt@patch@listings}
-%    \end{macrocode}
-%
-% \begin{environment}{verbatim*}
-% With the \pkg{verbatim} package.
-%    \begin{macrocode}
-\def\xxt@patch@verbatim{%
-  \@ifpackageloaded{verbatim}{%
-    \@namedef{verbatim*}{\begingroup\@verbatim\xxt@vprintspaces\verbatim@start}%
-  }{%
-%    \end{macrocode}
-% This is for vanilla LaTeX.
-%    \begin{macrocode}
-    \@namedef{verbatim*}{\@verbatim\xxt@vprintspaces\@sxverbatim}%
-  }}
-%    \end{macrocode}
-% \end{environment}
-% 
-% \begin{environment}{listingcont*}
-% This is for \pkg{moreverb}. 
-% The main |listing*| environment inherits this definition.
-%    \begin{macrocode}
-\def\xxt@patch@moreverb{%
-  \@ifpackageloaded{moreverb}{%
-    \@namedef{listingcont*}{%
-      \def\verbatim@processline{%
-        \thelisting@line \global\advance\listing@line1
-        \the\verbatim@line\par}%
-      \@verbatim\xxt@vprintspaces\verbatim@start}%
-  }{}}
-%    \end{macrocode}
-% \end{environment}
-% 
-% \pkg{listings} and \pkg{fancvrb} make things nice and easy:
-%    \begin{macrocode}
-\def\xxt@patch@fancyvrb{%
-  \@ifpackageloaded{fancyvrb}{%
-    \let\FancyVerbSpace\xxt@visiblespace
-  }{}}
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
-\def\xxt@patch@listings{%
-  \@ifpackageloaded{listings}{%
-    \let\lst@visiblespace\xxt@visiblespace
-  }{}}
-%    \end{macrocode}
-% Finish verbatim features:
-%    \begin{macrocode}
-\fi
-%    \end{macrocode}
 %
 %\iffalse
 %</package>
 %\fi
-%
-% \clearpage
-% \PrintIndex
 %
 % \Finale
 %
