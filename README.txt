@@ -1,5 +1,5 @@
 _________________________
-THE XLTXTRA PACKAGE v0.5d
+THE XLTXTRA PACKAGE v0.5e
 
 This package was previous used to provide a number of small
 features that are useful for XeLaTeX. As of fontspec v2, many
@@ -8,15 +8,17 @@ of these have now been incorporated into that package.
 This package therefore no longer does as much as it used to,
 but is still provided for backwards compatibility.
 
-- Loads fontspec and Ross Moore's xunicode automatically.
+- Loads fontspec automatically. fontspec now loads
+  Ross Moore's xunicode internally.
 
-- Loads Andrew Moschou's metalogo package for \XeTeX and \XeLaTeX logos.
+- Loads Andrew Moschou's metalogo package for \XeTeX
+  and \XeLaTeX logos.
 
-- Loads the fixltx2e package and patches other LaTeX commands:
-  \textsuperscript & \textsubscript:
-     now use fontspec to access
-     real superior/inferior characters,
-  \showhyphens: now works,
+- Loads the realscripts package to obtain "real" subscript
+  and superscript glyphs in \textsuperscript etc.,
+  including in footnotes.
+
+- \showhyphens is redefined so it now works to some degree.
 
 - Defines the dubiously useful commands
      \vfrac - for vulgar fractions with fontspec
@@ -24,8 +26,13 @@ but is still provided for backwards compatibility.
 
 For more information see the documentation xltxtra.pdf.
 
-____________
+______________
 Change History
+
+v0.5e:
+    Remove the code for subscripts/superscripts and load the
+    realscripts package instead.
+    (No user-level changes.)
 
 v0.5d:
     Remove those parts that have been taken into fontspec v2.0.

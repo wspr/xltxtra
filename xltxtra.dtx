@@ -4,7 +4,7 @@
 %</internal>
 %<*readme>
 _________________________
-THE XLTXTRA PACKAGE v0.5d
+THE XLTXTRA PACKAGE v0.5e
 
 This package was previous used to provide a number of small
 features that are useful for XeLaTeX. As of fontspec v2, many
@@ -13,15 +13,17 @@ of these have now been incorporated into that package.
 This package therefore no longer does as much as it used to,
 but is still provided for backwards compatibility.
 
-- Loads fontspec and Ross Moore's xunicode automatically.
+- Loads fontspec automatically. fontspec now loads
+  Ross Moore's xunicode internally.
 
-- Loads Andrew Moschou's metalogo package for \XeTeX and \XeLaTeX logos.
+- Loads Andrew Moschou's metalogo package for \XeTeX
+  and \XeLaTeX logos.
 
-- Loads the fixltx2e package and patches other LaTeX commands:
-  \textsuperscript & \textsubscript:
-     now use fontspec to access
-     real superior/inferior characters,
-  \showhyphens: now works,
+- Loads the realscripts package to obtain "real" subscript
+  and superscript glyphs in \textsuperscript etc.,
+  including in footnotes.
+
+- \showhyphens is redefined so it now works to some degree.
 
 - Defines the dubiously useful commands
      \vfrac - for vulgar fractions with fontspec
@@ -29,8 +31,13 @@ but is still provided for backwards compatibility.
 
 For more information see the documentation xltxtra.pdf.
 
-____________
+______________
 Change History
+
+v0.5e:
+    Remove the code for subscripts/superscripts and load the
+    realscripts package instead.
+    (No user-level changes.)
 
 v0.5d:
     Remove those parts that have been taken into fontspec v2.0.
@@ -180,6 +187,9 @@ This work consists of the file  xltxtra.dtx
 % \cmd\fakesuperscript\
 % may be used to access the `new' and `old' functionalities regardless of the \pkgopt{no-sscript}.
 %
+% This functionality is achieved through loading the \pkg{realscripts}
+% package.
+%
 %
 %
 % \subsection{Logos}
@@ -252,13 +262,8 @@ This work consists of the file  xltxtra.dtx
 %
 %    \begin{macrocode}
 \ProvidesPackage{xltxtra}
-  [2010/06/03 v0.5d Improvements for the "XeLaTeX" format]
+  [2010/09/20 v0.5e Improvements for the "XeLaTeX" format]
 %    \end{macrocode}
-%
-% \changes{v0.3}{2007/05/29}{Added proper documentation.}
-% \changes{v0.3}{2007/05/29}{Added \texttt{no-} package options to restrict functionality.}
-% \changes{v0.4}{2008/07/29}{Added support for verbatim \& visible spaces.}
-% ^^A\PrintChanges
 %
 % \paragraph{Not for Lua\TeX}
 %    \begin{macrocode}
@@ -279,7 +284,7 @@ This work consists of the file  xltxtra.dtx
 \RequirePackage{ifxetex}
 \RequireXeTeX
 \RequirePackage{fontspec}[2010/05/14 v2.0]
-\RequirePackage{xunicode}
+\RequirePackage{realscripts}
 %    \end{macrocode}
 %
 % \paragraph{Option processing}
@@ -349,37 +354,10 @@ This work consists of the file  xltxtra.dtx
   \setlogokern{aT}{#5}%  
   \setlogokern{eL}{#6}}
 %    \end{macrocode}
-% \changes{v0.1}{2006/05/03}{Implemented.}
-% \changes{v0.2}{2006/06/11}{Added \cmd\XeLaTeX\ logo. Thanks Herb!}
-% \changes{v0.2}{2006/06/11}{Added TFM font check.}
-% \changes{v0.2}{2006/08/12}{\cmd\TeX@logo@spacing made ``private'' and added an arg for \cmd\XeLaTeX.}
-% \changes{v0.3a}{2007/06/20}{Changed \cmd\setlength\ to \cmd\def. Silly me.}
-% \changes{v0.5}{2009/09/02}{Deprecated \cmd\TeX@logo@spacing, replaced with \textsf{metalogo} package (AGM).}
-% \changes{v0.5a}{2009/10/25}{Removed metalogo customisations; reply on the package defaults instead.}
 % \end{macro}
 %
 %
 % \section{Subscript and superscript}
-%
-% For OpenType fonts, the subscript feature (|subs|) is used, but if that doesn't
-% exist then the scientific inferior feature (|sinf|) is used on the assumption
-% that something's better than nothing. This matches current trends in OpenType font design.
-%
-% Footnotes are patched to use this better \cmd\textsuperscript.
-%
-% \begin{macro}{\fakesubscript}
-% \begin{macro}{\fakesuperscript}
-% The old (`fake') methods:
-%    \begin{macrocode}
-\DeclareRobustCommand*\fakesubscript[1]{%
-  \@textsubscript{\selectfont#1}}
-\DeclareRobustCommand*\fakesuperscript[1]{% 
-  \@textsuperscript{\selectfont#1}}
-%    \end{macrocode}
-% \changes{v0.1}{2006/05/03}{Implemented.}
-% \changes{v0.3}{2007/05/29}{Name change from \cmd\fakesubscript. Made robust.}
-% \end{macro}
-% \end{macro}
 %
 % \begin{macro}{\textsubscript}
 % \begin{macro}{\textsubscript*}
@@ -393,123 +371,11 @@ This work consists of the file  xltxtra.dtx
     \@ifstar{\realsubscript}{\fakesubscript}}
   \DeclareRobustCommand*\textsuperscript{%
     \@ifstar{\realsuperscript}{\fakesuperscript}}
-\else
-  \DeclareRobustCommand*\textsubscript{%
-    \@ifstar{\fakesubscript}{\realsubscript}}
-  \DeclareRobustCommand*\textsuperscript{%
-    \@ifstar{\fakesuperscript}{\realsuperscript}}
 \fi
 %    \end{macrocode}
-% \changes{v0.1}{2006/05/03}{Implemented.}
-% \end{macro}\end{macro}\end{macro}
-% \changes{v0.3}{2007/05/29}{Adjusted, made robust (with friends `super' and starred).}
 % \end{macro}
-%
-% \begin{macro}{\realsubscript}
-%    \begin{macrocode}
-\ExplSyntaxOn
-\DeclareRobustCommand*\realsubscript[1]{
-  \fontspec_if_fontspec_font:TF
-  {
-%    \end{macrocode}
-% OpenType fonts:
-%    \begin{macrocode}
-    \fontspec_if_opentype:TF
-    {
-      \fontspec_if_feature:nTF {+subs}
-      {
-        {\addfontfeature{VerticalPosition=Inferior}#1}
-      }
-      {
-        \fontspec_if_feature:nTF {+sinf}
-        {
-          {\addfontfeature{VerticalPosition=ScientificInferior}#1}
-        }
-        {
-          \fakesubscript{#1}
-        }
-      }
-    }
-%    \end{macrocode}
-% ATSUI fonts:
-%    \begin{macrocode}
-    {
-      \fontspec_if_aat_feature:nnTF {10} {2}
-      {
-        {\addfontfeature{VerticalPosition=Inferior}#1}
-      }
-      {
-        \fakesubscript{#1}
-      }
-    }
-  }
-%    \end{macrocode}
-% Non-fontspec fonts:
-%    \begin{macrocode}
-  {
-    \fakesubscript{#1}
-  }
-}
-%    \end{macrocode}
-% \changes{v0.1}{2006/05/03}{Implemented.}
-% \changes{v0.3}{2007/05/29}{Fixes to catch up with fontspec. Name change.}
-% \changes{v0.3c}{2008/03/02}{Fixed crash when used with a TFM font.}
-% \changes{v0.5c}{2010/05/14}{Use fontspec programmer's interface.}
 % \end{macro}
-%
-% \begin{macro}{\realsuperscript}
-% Text superscripts:
-%    \begin{macrocode}
-\DeclareRobustCommand*\realsuperscript[1]{
-  \fontspec_if_fontspec_font:TF
-  {
-%    \end{macrocode}
-% OpenType fonts:
-%    \begin{macrocode}
-    \fontspec_if_opentype:TF
-    {
-      \fontspec_if_feature:nTF {+sups}
-      {
-        {\addfontfeature{VerticalPosition=Superior}#1}
-      }
-      {
-        \fakesuperscript{#1}
-      }
-    }
-%    \end{macrocode}
-% ATSUI fonts:
-%    \begin{macrocode}
-    {
-      \fontspec_if_aat_feature:nnTF {10} {1}
-      {
-        {\addfontfeature{VerticalPosition=Superior}#1}
-      }
-      {
-        \fakesuperscript{#1}
-      }
-    }
-  }
-%    \end{macrocode}
-% Non-fontspec fonts:
-%    \begin{macrocode}
-  {
-    \fakesuperscript{#1}
-  }
-}
-%    \end{macrocode}
-% \changes{v0.1}{2006/05/03}{Implemented.}
-% \changes{v0.3}{2007/05/29}{Fixes to catch up with fontspec. Name change.}
-% \changes{v0.3c}{2008/03/02}{Fixed crash when used with a TFM font.}
-% \changes{v0.5c}{2010/05/14}{Use fontspec programmer's interface.}
 % \end{macro}
-%
-% Patching footnotes:
-% \begin{macro}{\@makefnmark}
-%    \begin{macrocode}
-\def\@makefnmark{\mbox{\normalfont\textsuperscript{\@thefnmark}}}
-%    \end{macrocode}
-% \changes{v0.2}{2007/02/04}{Footnotes patched to use new \cmd\textsuperscript.}
-% \changes{v0.3}{2007/05/29}{Footnote symbol put in an mbox.}
 % \end{macro}
 %
 % \section{Assorted commands}
@@ -520,6 +386,7 @@ This work consists of the file  xltxtra.dtx
 % No error checking is done to ensure that the font actually has the neceessary features.
 % Requires the \pkg{xunicode} package for \cmd\textfractionsolidus.
 %    \begin{macrocode}
+\ExplSyntaxOn
 \newcommand*\vfrac[2]{
   \fontspec_if_fontspec_font:TF
   {
@@ -543,8 +410,6 @@ This work consists of the file  xltxtra.dtx
 }
 \ExplSyntaxOff
 %    \end{macrocode}
-% \changes{v0.1}{2006/05/03}{Implemented.}
-% \changes{v0.5c}{2010/05/14}{Use fontspec programmer's interface.}
 % \end{macro}
 %
 % \begin{macro}{\namedglyph}
@@ -558,14 +423,13 @@ This work consists of the file  xltxtra.dtx
     \xxt@namedglyph@fallback{#1}%
   \fi}
 %    \end{macrocode}
-% \changes{v0.2}{2006/08/12}{Implemented.}
 % \end{macro}
+%
 % \begin{macro}{\xxt@namedglyph@fallback}
 % Redefine this macro to change how glyph names that aren't found get typeset.
 %    \begin{macrocode}
 \newcommand\xxt@namedglyph@fallback[1]{[#1]}
 %    \end{macrocode}
-% \changes{v0.2}{2006/08/12}{Implemented.}
 % \end{macro}
 %
 %
@@ -599,7 +463,6 @@ This work consists of the file  xltxtra.dtx
      \expandafter\xxt@sh@cat
    \fi}
 %    \end{macrocode}
-% \changes{v0.3}{2007/05/30}{Implemented.}
 % \end{macro}
 %
 %
