@@ -1,33 +1,38 @@
-_________________________
-THE XLTXTRA PACKAGE v0.5e
+________________________
+THE XLTXTRA PACKAGE v0.6
 
-This package was previous used to provide a number of small
+This package was previously used to provide a number of small
 features that are useful for XeLaTeX. As of fontspec v2, many
-of these have now been incorporated into that package.
+of these have now been incorporated into that package. More
+recently, other updates to LaTeX2e itself have eliminated some
+of the workarounds previously included in this package.
 
 This package therefore no longer does as much as it used to,
-but is still provided for backwards compatibility.
+but is still provided for backwards compatibility. A summary:
 
-- Loads fontspec automatically. fontspec now loads
-  Ross Moore's xunicode internally.
+- Loads fontspec.
 
-- Loads Andrew Moschou's metalogo package for \XeTeX
-  and \XeLaTeX logos.
+- Loads Andrew Moschou's metalogo package for customised
+  \XeTeX and \XeLaTeX logos.
 
-- Loads the realscripts package to obtain "real" subscript
-  and superscript glyphs in \textsuperscript etc.,
+- Loads the realscripts package to obtain OpenType-feature
+  subscript and superscript glyphs in \textsuperscript etc.,
   including in footnotes.
 
-- \showhyphens is redefined so it now works to some degree.
+- \showhyphens is redefined so it now works.
 
 - Defines the dubiously useful commands
-     \vfrac - for vulgar fractions with fontspec
+     \vfrac - for vulgar fractions using OpenType features
      \namedglyph - to access font glyphs by name
 
 For more information see the documentation xltxtra.pdf.
 
 ______________
 Change History
+
+v0.6:
+    Replace definition of \showhyphens with one that properly
+    replicates the plain TeX definition in behaviour.
 
 v0.5e:
     Remove the code for subscripts/superscripts and load the
@@ -48,5 +53,5 @@ v0.5b:
 
 ______________
 Will Robertson
-2006-2010
+2006-2016
 Released under the LaTeX Project Public License

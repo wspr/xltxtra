@@ -8,13 +8,13 @@
 \preamble
   ____________________________
   The XLTXTRA package         
-  (C) 2006-2010 Will Robertson
+  (C) 2006-2016 Will Robertson
   License information appended
 
 \endpreamble
 \postamble
 
-Copyright (C) 2006-2010 by Will Robertson <wspr81@gmail.com>
+Copyright (C) 2006-2016 by Will Robertson <wspr81@gmail.com>
 
 Distributable under the LaTeX Project Public License,
 version 1.3c or higher (your choice). The latest version of
@@ -72,12 +72,10 @@ This work consists of the file  xltxtra.dtx
 % \section{Introduction}
 %
 % This document describes the \pkg{xltxtra} package. 
-% It implements some odds-and-ends features and
-% improved functionality for broken or sub-standard \LaTeX\ methods when using the
-% \XeTeX\ format.
+% It implements some odds-and-ends features when using the \XeLaTeX\ format.
 %
 % \subsection{Usage}
-% Easy: |\usepackage{xltxtra}|. This package automatically loads the following packages: \pkg{fixltx2e}, \pkg{metalogo}, \pkg{xunicode}, \pkg{fontspec}.
+% Easy: |\usepackage{xltxtra}|. This package automatically loads the following packages: \pkg{fontspec}, \pkg{realscripts}, \pkg{metalogo}.
 %
 % There are some package options to disable various functionality that could clash with other things:
 % \begin{description}[font=\ttfamily]
@@ -89,6 +87,9 @@ This work consists of the file  xltxtra.dtx
 %
 % \subsection{\cmd\textsuperscript\ and \cmd\textsubscript}
 % \seclabel{sscript}
+%
+% This functionality is achieved through loading the \pkg{realscripts}
+% package.
 %
 % These two macros have been redefined to take advantage, if possible, of actual superior or inferior glyphs in the main document font. This is very important for high-quality typesetting — compare this first example to the third; yes, they are the same font.
 % \begin{quotation}\color{niceblue}
@@ -125,8 +126,6 @@ This work consists of the file  xltxtra.dtx
 % \cmd\fakesuperscript\
 % may be used to access the `new' and `old' functionalities regardless of the \pkgopt{no-sscript}.
 %
-% This functionality is achieved through loading the \pkg{realscripts}
-% package.
 %
 %
 %
@@ -188,8 +187,8 @@ This work consists of the file  xltxtra.dtx
 %
 % \subsection{The \cmd\showhyphens\ command}
 % The default definition doesn't work in \XeTeX. 
-% A new version, written by Jonathan Kew, is included in this package that \emph{does} work. Minor differences with the original: the showing of hyphens in the console output will be marked with explanatory text. Also, multiple words, separated by commas, will end up in separate instances of `showing hyphens'.
-% \showhyphens{discomedusoid, discommodiousness}
+% A new version, written by Enrico Gregorio, is included in this package that \emph{does} work; note that the syntax now matches plain \TeX's original rather than the comma-list approach taken by an earlier version of this package.
+% \showhyphens{discomedusoid discommodiousness}
 %
 % \newpage
 % \part{The \textsf{xltxtra} package}
@@ -200,7 +199,7 @@ This work consists of the file  xltxtra.dtx
 %
 %    \begin{macrocode}
 \ProvidesPackage{xltxtra}
-  [2010/09/20 v0.5e Improvements for the "XeLaTeX" format]
+  [2016/01/21 v0.6 Improvements for the "XeLaTeX" format]
 %    \end{macrocode}
 %
 % \paragraph{Not for Lua\TeX}
@@ -212,7 +211,7 @@ This work consists of the file  xltxtra.dtx
     LOAD FONTSPEC DIRECTLY, INSTEAD.^^J
     ABORTING LOADING%
   }
-  \RequirePackage{fontspec}[2010/05/14 v2.0]
+  \RequirePackage{fontspec}
   \expandafter \endinput
 \fi
 %    \end{macrocode}
@@ -221,7 +220,7 @@ This work consists of the file  xltxtra.dtx
 %    \begin{macrocode}
 \RequirePackage{ifxetex}
 \RequireXeTeX
-\RequirePackage{fontspec}[2010/05/14 v2.0]
+\RequirePackage{fontspec}
 \RequirePackage{realscripts}
 %    \end{macrocode}
 %
@@ -372,34 +371,82 @@ This work consists of the file  xltxtra.dtx
 %
 %
 % \begin{macro}{\showhyphens}
-% This macro is entirely due to Jonathan Kew. 
-% I wish I knew how to write these sorts of things.
+% Courtesy egreg.
 %    \begin{macrocode}
-\newbox\xxt@tempbox
-\def\showhyphens#1{%
-  \typeout{^^J*********************** 
-           \string\showhyphens: 
-           ***********************}%
-  \@for\@ii:=#1\do{\xxt@showhyphens{\@ii}}%
-  \typeout{^^J***********************%
-           ***************%
-           ***********************^^J}}
-\def\xxt@showhyphens#1{%
-   \setbox\@tempboxa=\vbox{%
-     \hsize1sp \hbadness10000 \hfuzz\maxdimen
-     \everypar={} \leftskip\z@ \rightskip\leftskip 
-     \pretolerance\m@ne \noindent \hskip\z@ #1\par
-     \global\setbox\xxt@tempbox=\hbox{}\xxt@sh@cat}%
-   \setbox\@tempboxa=\hbox to \maxdimen{\unhbox\xxt@tempbox}}
-\def\xxt@sh@cat{\unskip\unpenalty
-   \setbox\@tempboxa=\lastbox 
-   \unless\ifvoid\@tempboxa 
-     \global\setbox\xxt@tempbox=\hbox{%
-       \unhbox\@tempboxa
-       \unskip\unskip
-       \unhbox\xxt@tempbox}%
-     \expandafter\xxt@sh@cat
-   \fi}
+\ExplSyntaxOn
+\seq_new:N \l__xetex_showhyphens_seq
+\box_new:N \l__xetex_show_hyphens_wrapping_box
+\box_new:N \l__xetex_show_hyphens_temp_box
+\box_new:N \l__xetex_show_hyphens_final_box
+\box_new:N \g__xetex_show_hyphens_word_box
+
+\cs_new_protected:Npn \xetex_show_hyphens:n #1
+ {
+  \box_clear:N \l__xetex_show_hyphens_final_box
+  % split the input into items
+  \seq_set_split:Nnn \l__xetex_showhyphens_seq { ~ } { #1 }
+  % hyphenate all items
+  \seq_map_function:NN \l__xetex_showhyphens_seq \xetex_hyphenate_word:n
+  % set a box to the maximum dimension to force a Underfull \hbox warning
+  \hbox_set_to_wd:Nnn \l__xetex_show_hyphens_final_box { \c_max_dim }
+   {
+    \hbox_unpack_clear:N \l__xetex_show_hyphens_final_box
+   }
+ }
+
+\cs_new_protected:Npn \xetex_hyphenate_word:n #1
+ {
+  \vbox_set:Nn \l__xetex_show_hyphens_wrapping_box
+   {% build a paragraph with the word with a very narrow line width
+    \dim_set:Nn \hsize { 1sp }
+    % disregard spurious messages
+    \hbadness = \c_ten_thousand
+    \dim_set:Nn \hfuzz { \c_max_dim }
+    % clear possible values of \everypar and other parameters
+    \everypar={}
+    \skip_set:Nn \leftskip { 0pt }
+    \skip_set_eq:NN \rightskip \leftskip
+    % skip the first step
+    \pretolerance = \c_minus_one
+    % avoid the indentation and add a skip to allow hyphenation
+    \noindent
+    \skip_horizontal:n { 0pt }
+    #1
+    \par
+    \hbox_gset:Nn \g__xetex_show_hyphens_word_box {}
+    % start a recursion to dismantle the paragraph just built
+    \xetex_show_hyphens_split:
+    % the result is put into \g__xetex_show_hyphens_word_box
+   }
+   % add the box to the final container
+   \hbox_set:Nn \l__xetex_show_hyphens_final_box
+    {
+     \hbox_unpack_clear:N \l__xetex_show_hyphens_final_box
+     \hbox_unpack_clear:N \g__xetex_show_hyphens_word_box
+    }
+ }
+
+\cs_new_protected:Npn \xetex_show_hyphens_split:
+ {
+  \unskip % remove the interline glue
+  \unpenalty % remove possible penalties
+  % get the last line
+  \box_set_to_last:N \l__xetex_show_hyphens_temp_box
+  \box_if_empty:NF \l__xetex_show_hyphens_temp_box
+   {% if there is a last line unpack it into a container
+    \hbox_gset:Nn \g__xetex_show_hyphens_word_box
+     {% the order is last to first
+      \hbox_unpack_clear:N \l__xetex_show_hyphens_temp_box
+      \unskip\unskip % remove spaces
+      \hbox_unpack_clear:N \g__xetex_show_hyphens_word_box
+     }
+    % restart the recursion
+    \xetex_show_hyphens_split:
+   }
+ }
+
+\cs_set_eq:NN \showhyphens \xetex_show_hyphens:n
+\ExplSyntaxOff
 %    \end{macrocode}
 % \end{macro}
 %
